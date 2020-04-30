@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:todo_flutter/models/nav_drawer.dart';
-import 'package:todo_flutter/taskPage.dart';
+import 'package:todo_flutter/View/taskPage.dart';
 
-import 'createTask.dart';
+import 'View/createTask.dart';
 
 void main() => runApp(TodoApp());
 
