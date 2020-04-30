@@ -38,6 +38,9 @@ class HabitWidget extends StatefulWidget {
 }
 
 class _HabitState extends State<HabitWidget> {
+  int doneCount = 0;
+  int totalCount = 1;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -48,9 +51,14 @@ class _HabitState extends State<HabitWidget> {
             onPressed: () {},
             elevation: 2.0,
             fillColor: Colors.white,
-            child: Icon(
-              Icons.today,
-              size: 40.0,
+            child: Column(
+              children: <Widget>[
+                Icon(
+                  Icons.today,
+                  size: 40.0,
+                ),
+                Text('$doneCount/$totalCount'),
+              ],
             ),
             padding: EdgeInsets.all(15.0),
             shape: CircleBorder(),
@@ -97,6 +105,8 @@ class _DaysListState extends State<DaysList> {
 class DayWidget extends StatelessWidget {
   final String text;
   final MaterialColor color;
+  final int doneCount = 0;
+  final int totalCount = 2;
 
   DayWidget(this.text, this.color);
 
@@ -127,7 +137,7 @@ class DayWidget extends StatelessWidget {
                       .copyWith(backgroundColor: Colors.transparent),
                   child: Chip(
                     materialTapTargetSize: MaterialTapTargetSize.padded,
-                    label: Text('0/2'),
+                    label: Text('$doneCount/$totalCount'),
                     labelStyle: TextStyle(
                       color: Colors.grey,
                     ),
