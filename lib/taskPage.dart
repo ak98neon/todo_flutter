@@ -31,8 +31,8 @@ class _HabitsRowState extends State<HabitsRow> {
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: habitList));
   }
 }
@@ -126,6 +126,30 @@ class _DayWidgetState extends State<DayWidget> {
     this.totalCount = taskList.length;
   }
 
+  Widget showGoalAmount() {
+    if (totalCount > 0) {
+      return Visibility(
+        child: Chip(
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          label: Text('$doneCount/$totalCount'),
+          labelStyle: TextStyle(
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+    return Visibility(
+      visible: false,
+      child: Chip(
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        label: Text('$doneCount/$totalCount'),
+        labelStyle: TextStyle(
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -151,13 +175,7 @@ class _DayWidgetState extends State<DayWidget> {
                 child: ChipTheme(
                   data: ChipTheme.of(context)
                       .copyWith(backgroundColor: Colors.transparent),
-                  child: Chip(
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    label: Text('$doneCount/$totalCount'),
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
+                  child: showGoalAmount(),
                 ),
               )
             ],
