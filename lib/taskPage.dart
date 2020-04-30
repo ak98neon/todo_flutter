@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        HabitsRow(),
-        DaysList(),
-      ],
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            HabitsRow(),
+            DaysList(),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -16,7 +20,6 @@ class HabitsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        padding: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
         scrollDirection: Axis.horizontal,
         child: Row(children: <Widget>[
           HabitWidget(),
@@ -38,7 +41,7 @@ class _HabitState extends State<HabitWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: const EdgeInsets.all(7.0),
       child: Column(
         children: <Widget>[
           RawMaterialButton(
@@ -79,7 +82,9 @@ class _DaysListState extends State<DaysList> {
         child: Align(
           alignment: Alignment.topLeft,
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 DayWidget("TODAY", Colors.lightBlue),
                 DayWidget("TOMORROW", Colors.lightBlue),
@@ -93,26 +98,46 @@ class DayWidget extends StatelessWidget {
   final String text;
   final MaterialColor color;
 
-
   DayWidget(this.text, this.color);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
+      child: new Column(
         children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(
-              color: color,
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.left,
+          Row(
+            children: <Widget>[
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 8.0, bottom: 10.0, top: 10.0),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChipTheme(
+                  data: ChipTheme.of(context)
+                      .copyWith(backgroundColor: Colors.transparent),
+                  child: Chip(
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    label: Text('0/2'),
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
           Column(
             children: <Widget>[
-              TaskWidget(),
               TaskWidget(),
               TaskWidget(),
             ],
@@ -129,17 +154,28 @@ class TaskWidget extends StatefulWidget {
 }
 
 class _TaskWidgetState extends State<TaskWidget> {
+  bool isDone = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Row(
         children: <Widget>[
-          Checkbox(
-            value: false, onChanged: (bool value) {},
+          Theme(
+            child: Checkbox(
+              value: isDone,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onChanged: (bool value) {
+                setState(() {
+                  isDone = value;
+                });
+              },
+            ),
+            data: ThemeData(
+              unselectedWidgetColor: Colors.indigo.shade500,
+            ),
           ),
-          Text(
-            "Task 1"
-          )
+          Text("Task 1")
         ],
       ),
     );
