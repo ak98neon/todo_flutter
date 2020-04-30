@@ -16,30 +16,32 @@ class TaskPage extends StatelessWidget {
   }
 }
 
-class HabitsRow extends StatelessWidget {
+class HabitsRow extends StatefulWidget {
+  @override
+  _HabitsRowState createState() => _HabitsRowState();
+}
+
+class _HabitsRowState extends State<HabitsRow> {
+  List<Widget> habitList = [
+    HabitWidget('Add', Colors.grey),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(children: <Widget>[
-          HabitWidget(),
-          HabitWidget(),
-          HabitWidget(),
-          HabitWidget(),
-          HabitWidget(),
-          HabitWidget(),
-        ]));
+        child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: habitList));
   }
 }
 
-class HabitWidget extends StatefulWidget {
-  @override
-  _HabitState createState() => _HabitState();
-}
+class HabitWidget extends StatelessWidget {
+  final String text;
+  final MaterialColor backColor;
 
-class _HabitState extends State<HabitWidget> {
-  int doneCount = 0;
-  int totalCount = 1;
+  HabitWidget(this.text, this.backColor);
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +52,14 @@ class _HabitState extends State<HabitWidget> {
           RawMaterialButton(
             onPressed: () {},
             elevation: 2.0,
-            fillColor: Colors.white,
+            fillColor: backColor,
             child: Column(
               children: <Widget>[
                 Icon(
-                  Icons.today,
+                  Icons.add,
                   size: 40.0,
+                  color: Colors.white,
                 ),
-                Text('$doneCount/$totalCount'),
               ],
             ),
             padding: EdgeInsets.all(15.0),
@@ -66,7 +68,7 @@ class _HabitState extends State<HabitWidget> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              "Some description",
+              text,
               style: TextStyle(fontSize: 10.0),
             ),
           ),
@@ -96,19 +98,33 @@ class _DaysListState extends State<DaysList> {
               children: <Widget>[
                 DayWidget("TODAY", Colors.lightBlue),
                 DayWidget("TOMORROW", Colors.lightBlue),
-                DayWidget("FUTURE", Colors.grey),
+                DayWidget("THIS WEEK", Colors.grey),
+                DayWidget("LATER", Colors.grey),
               ]),
         ));
   }
 }
 
-class DayWidget extends StatelessWidget {
-  final String text;
-  final MaterialColor color;
-  final int doneCount = 0;
-  final int totalCount = 2;
+class DayWidget extends StatefulWidget {
+  String text;
+  MaterialColor color;
 
   DayWidget(this.text, this.color);
+
+  @override
+  _DayWidgetState createState() => _DayWidgetState(text, color);
+}
+
+class _DayWidgetState extends State<DayWidget> {
+  final String text;
+  final MaterialColor color;
+  int doneCount = 0;
+  int totalCount = 2;
+  List<TaskWidget> taskList = [];
+
+  _DayWidgetState(this.text, this.color) {
+    this.totalCount = taskList.length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,10 +163,7 @@ class DayWidget extends StatelessWidget {
             ],
           ),
           Column(
-            children: <Widget>[
-              TaskWidget(),
-              TaskWidget(),
-            ],
+            children: taskList,
           )
         ],
       ),
@@ -158,13 +171,10 @@ class DayWidget extends StatelessWidget {
   }
 }
 
-class TaskWidget extends StatefulWidget {
-  @override
-  _TaskWidgetState createState() => _TaskWidgetState();
-}
+class TaskWidget extends StatelessWidget {
+  final String text;
 
-class _TaskWidgetState extends State<TaskWidget> {
-  bool isDone = false;
+  TaskWidget(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -172,22 +182,36 @@ class _TaskWidgetState extends State<TaskWidget> {
       child: Row(
         children: <Widget>[
           Theme(
-            child: Checkbox(
-              value: isDone,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: (bool value) {
-                setState(() {
-                  isDone = value;
-                });
-              },
-            ),
+            child: TaskCheckBox(),
             data: ThemeData(
               unselectedWidgetColor: Colors.indigo.shade500,
             ),
           ),
-          Text("Task 1")
+          Text(text)
         ],
       ),
+    );
+  }
+}
+
+class TaskCheckBox extends StatefulWidget {
+  @override
+  _TaskCheckBoxState createState() => _TaskCheckBoxState();
+}
+
+class _TaskCheckBoxState extends State<TaskCheckBox> {
+  bool isDone = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+      value: isDone,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      onChanged: (bool value) {
+        setState(() {
+          isDone = value;
+        });
+      },
     );
   }
 }
