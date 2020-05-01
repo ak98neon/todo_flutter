@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:todo_flutter/Models/task.dart';
 
 class TaskPage extends StatelessWidget {
   @override
@@ -105,6 +109,7 @@ class _DaysListState extends State<DaysList> {
   }
 }
 
+// ignore: must_be_immutable
 class DayWidget extends StatefulWidget {
   String text;
   MaterialColor color;
@@ -122,8 +127,44 @@ class _DayWidgetState extends State<DayWidget> {
   int totalCount = 2;
   List<TaskWidget> taskList = [];
 
+  @override
+  // ignore: must_call_super
+  void initState() {
+    _loadTasks(text);
+  }
+
   _DayWidgetState(this.text, this.color) {
     this.totalCount = taskList.length;
+  }
+
+  void _loadTasks(String period) {
+    getTasks(period).then((list) => {
+      setState(() => {
+        taskList = list,
+      })
+    });
+  }
+
+  Future<List<TaskWidget>> getTasks(String period) async {
+    final http.Response response = await http.get(
+      'http://localhost:8080/v1/todo/tasks?period=$period',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<TaskWidget> widgets = [];
+
+      Iterable list = json.decode(response.body);
+      var tasks = list.map((model) => Task.fromJson(model)).toList();
+      for (var value in tasks) {
+        widgets.add(TaskWidget(value.name, value.date));
+      }
+      return widgets;
+    } else {
+      throw Exception('Failed get tasks');
+    }
   }
 
   Widget showGoalAmount() {
@@ -191,8 +232,9 @@ class _DayWidgetState extends State<DayWidget> {
 
 class TaskWidget extends StatelessWidget {
   final String text;
+  final String date;
 
-  TaskWidget(this.text);
+  TaskWidget(this.text, this.date);
 
   @override
   Widget build(BuildContext context) {
